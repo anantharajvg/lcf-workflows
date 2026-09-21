@@ -1,0 +1,5 @@
+{
+  "host": "vga@riker.olcf.ornl.gov",
+  "account": "stf053",
+  "remote_root": "/lustre/orion/stf053/scratch/vga/olcf-prototype"
+}
