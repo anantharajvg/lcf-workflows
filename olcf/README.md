@@ -6,6 +6,8 @@
   the completed scheduler test and gives a manual, reproducible procedure.
 - [Data-analysis extension plan](docs/data-analysis-extension-plan.md) describes
   the next milestones for turning this smoke test into an analysis workflow.
+- [Handoff for the next collaborator or agent](docs/handoff-defiant-s3m.md)
+  records verified state, constraints, and the next decision needed.
 
 ## Scope and decisions
 
