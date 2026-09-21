@@ -1,4 +1,4 @@
-# OLCF / Riker workflow
+# ACE IRI concept: OLCF workflows
 
 - Target Riker, user vga, allocation stf053. Do not use Frontier templates.
 - Keep authentication interactive and human-controlled. Never collect or store RSA credentials.

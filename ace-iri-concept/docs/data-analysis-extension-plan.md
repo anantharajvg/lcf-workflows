@@ -1,4 +1,4 @@
-# Plan for a Defiant S3M data-analysis workflow
+# ACE IRI concept: plan for a Defiant S3M data-analysis workflow
 
 The S3M smoke test has established a useful base: a local program can submit a
 small CPU job to Defiant and observe its final Slurm state. The next goal is a
@@ -71,7 +71,7 @@ automation.
 When the first analysis is chosen, keep its durable pieces together:
 
 ```text
-olcf/
+ace-iri-concept/
   configs/             # reviewed cluster and workflow settings
   docs/                # design decisions and operating guides
   src/                 # analysis code and batch-script templates

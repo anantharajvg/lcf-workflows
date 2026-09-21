@@ -2,6 +2,7 @@
 
 **Date:** 2026-09-21  
 **Status:** completed successfully  
+**Project:** ACE IRI concept
 **Purpose:** prove that a local Python program can submit and monitor a small
 Slurm job on the Defiant testbed through OLCF's S3M service.
 
@@ -56,10 +57,10 @@ work together.
 
 ## Manual procedure
 
-Start in the OLCF project directory and run the local checks:
+Start in the ACE IRI concept project directory and run the local checks:
 
 ```bash
-cd /Users/vga/projects/lcf-workflows/olcf
+cd /Users/vga/projects/lcf-workflows/ace-iri-concept
 make test
 ```
 

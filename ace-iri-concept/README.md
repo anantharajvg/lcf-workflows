@@ -1,4 +1,4 @@
-# Laptop → Riker: CPU workflow prototype
+# ACE IRI concept: Riker and Defiant workflow prototypes
 
 ## Project documents
 
@@ -16,7 +16,7 @@ job, inspect status, and retrieve a verifiable numerical result. This milestone
 is validated locally only. No live Riker connection or submission has been made.
 
 User: `vga`; allocation: `stf053`; host: `riker.olcf.ornl.gov`.
-Proposed working directory: `/lustre/orion/stf053/scratch/vga/olcf-prototype`.
+Proposed working directory: `/lustre/orion/stf053/scratch/vga/ace-iri-concept`.
 The path follows OLCF's documented scratch layout; access and allocation validity
 must be confirmed on Riker. Runs get separate subdirectories.
 
@@ -31,7 +31,7 @@ request. Slurm launches the workload through srun on a compute node.
 ## Local validation
 
 ```bash
-cd /Users/vga/projects/lcf-workflows/olcf
+cd /Users/vga/projects/lcf-workflows/ace-iri-concept
 make test
 python3 workflow.py prepare smoke-001
 python3 workflow.py stage smoke-001
@@ -72,7 +72,8 @@ It uses the S3M OpenAPI gateway with a project token header file outside this
 repository. The first request is a one-node, one-task, five-minute CPU smoke test
 on `batch-cpu`, running `hostname` through `srun`. Its working directory must
 already exist and be writable by the project automation user:
-`/lustre/polis/stf053/proj-shared/olcf-s3m-test`.
+`/lustre/polis/stf053/proj-shared/olcf-s3m-test`. This existing, verified
+remote path has not been renamed as part of the local project rename.
 
 ```bash
 python3 s3m_defiant.py probe --header-file /Users/vga/.config/olcf/stf053-s3m.header --execute

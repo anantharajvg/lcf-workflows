@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=olcf-smoke
+#SBATCH --job-name=ace-iri-smoke
 #SBATCH --partition=batch
 #SBATCH --nodes=1
 #SBATCH --ntasks=1

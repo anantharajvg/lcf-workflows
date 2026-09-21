@@ -45,7 +45,7 @@ def request(cfg, run_id):
         "date -u +%FT%TZ", "hostname", "srun --ntasks=1 /bin/hostname",
     )) + "\n"
     return {"job": {
-        "name": f"s3m-smoke-{run_id}"[:128], "account": cfg["account"],
+        "name": f"ace-iri-smoke-{run_id}"[:128], "account": cfg["account"],
         "partition": cfg["partition"], "nodes": "1", "tasks": 1,
         "time_limit": {"set": True, "number": 5},
         "current_working_directory": cfg["working_directory"],

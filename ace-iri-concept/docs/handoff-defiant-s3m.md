@@ -1,9 +1,9 @@
-# Handoff: Defiant S3M workflow prototype
+# Handoff: ACE IRI concept and Defiant S3M workflow prototype
 
 **Last updated:** 2026-09-21  
 **Repository:** `/Users/vga/projects/lcf-workflows`  
-**Working directory:** `/Users/vga/projects/lcf-workflows/olcf`  
-**Git commit at handoff:** `5036489` (`Document Defiant S3M proof of concept`)
+**Working directory:** `/Users/vga/projects/lcf-workflows/ace-iri-concept`
+**Git state:** see `git log --oneline` for the current commit
 
 ## Purpose and current status
 
@@ -57,7 +57,7 @@ against the live S3M API.
 ## Reproduce the safe local portion
 
 ```bash
-cd /Users/vga/projects/lcf-workflows/olcf
+cd /Users/vga/projects/lcf-workflows/ace-iri-concept
 make test
 ```
 
