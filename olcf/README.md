@@ -76,6 +76,9 @@ The last command remains preview-only until `--execute` is added. Before any liv
 submission, inspect the generated `runs/s3m-<run>/request.json` and confirm that
 the Polis working directory exists with correct project automation-user access.
 S3M is an early-release test API; do not use it as a production workflow.
+The first live smoke test, job `14070` on 2026-09-21, completed successfully
+with exit code 0. S3M does not currently provide OLCF filesystem access, so the
+workflow verifies scheduler completion but cannot retrieve the job's stdout.
 
 Submission records an attempt before sending sbatch. A second attempt with the
 same run ID is blocked, including after an interrupted connection. If a response

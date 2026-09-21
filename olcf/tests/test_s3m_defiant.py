@@ -16,9 +16,9 @@ class S3MDefiantTests(unittest.TestCase):
         body = s.request(s.load_config(), "trial-01")
         self.assertEqual(body["job"]["account"], "stf053")
         self.assertEqual(body["job"]["partition"], "batch-cpu")
-        self.assertEqual(body["job"]["nodes"], 1)
+        self.assertEqual(body["job"]["nodes"], "1")
         self.assertEqual(body["job"]["tasks"], 1)
-        self.assertIn("srun --ntasks=1 /bin/hostname", body["script"])
+        self.assertIn("srun --ntasks=1 /bin/hostname", body["job"]["script"])
 
     def test_invalid_run_id_is_rejected(self):
         with self.assertRaises(ValueError):
@@ -29,6 +29,10 @@ class S3MDefiantTests(unittest.TestCase):
         self.assertIn("POST", cmd)
         self.assertIn("@/tmp/request.json", cmd)
         self.assertTrue(cmd[-1].endswith("/job/submit"))
+
+    def test_status_url_uses_a_single_numeric_job_id(self):
+        cmd = s.curl(s.load_config(), Path("/tmp/header"), "/job/14069")
+        self.assertTrue(cmd[-1].endswith("/job/14069"))
 
     def test_header_permissions_are_checked(self):
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
@@ -56,6 +60,8 @@ class S3MDefiantTests(unittest.TestCase):
             header.chmod(0o600)
             with patch.object(s, "ROOT", root), patch.object(s, "subprocess") as process:
                 process.run.return_value.stdout = "{\"job_id\": 123}\n"
+                process.run.return_value.stderr = ""
+                process.run.return_value.returncode = 0
                 with patch("sys.argv", ["s3m_defiant.py", "submit", "--header-file", str(header), "--run-id", "trial", "--execute"]):
                     s.main()
                 with patch("sys.argv", ["s3m_defiant.py", "submit", "--header-file", str(header), "--run-id", "trial", "--execute"]):

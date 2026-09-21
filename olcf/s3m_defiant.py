@@ -44,19 +44,20 @@ def request(cfg, run_id):
         "#!/bin/bash", "set -euo pipefail", "echo 'S3M Defiant smoke test'",
         "date -u +%FT%TZ", "hostname", "srun --ntasks=1 /bin/hostname",
     )) + "\n"
-    return {"script": script, "job": {
+    return {"job": {
         "name": f"s3m-smoke-{run_id}"[:128], "account": cfg["account"],
-        "partition": cfg["partition"], "nodes": 1, "tasks": 1,
+        "partition": cfg["partition"], "nodes": "1", "tasks": 1,
         "time_limit": {"set": True, "number": 5},
         "current_working_directory": cfg["working_directory"],
-        "environment": ["PATH=/usr/bin:/bin"],
+        "environment": ["PATH=/usr/bin:/bin"], "script": script,
     }}
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("probe", "jobs", "prepare", "submit"))
+    parser.add_argument("action", choices=("probe", "jobs", "prepare", "submit", "status"))
     parser.add_argument("--header-file", required=True)
     parser.add_argument("--run-id")
+    parser.add_argument("--job-id")
     parser.add_argument("--execute", action="store_true")
     args = parser.parse_args()
     cfg = load_config()
@@ -75,6 +76,10 @@ def main():
         cmd = curl(cfg, header, "/ping")
     elif args.action == "jobs":
         cmd = curl(cfg, header, "/jobs")
+    elif args.action == "status":
+        if not args.job_id or not re.fullmatch(r"[0-9]+", args.job_id):
+            parser.error("status requires a numeric --job-id")
+        cmd = curl(cfg, header, f"/job/{args.job_id}")
     else:
         if not args.run_id:
             parser.error("submit requires --run-id")
@@ -91,11 +96,20 @@ def main():
         if marker.exists():
             raise FileExistsError("Submission was already attempted; inspect Defiant before retrying")
         marker.write_text("Check Defiant before any retry.\n")
-    result = subprocess.run(cmd, check=True, text=True, stdout=subprocess.PIPE).stdout
+    completed = subprocess.run(cmd, check=False, text=True, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE)
     if args.action == "submit":
-        (body.parent / "submission-response.json").write_text(result)
+        (body.parent / "submission-response.json").write_text(completed.stdout)
+    if completed.returncode:
+        detail = completed.stdout.strip() or completed.stderr.strip() or "no response body"
+        raise RuntimeError(f"S3M request failed: {detail}")
+    result = completed.stdout
     if args.action == "jobs":
         print(json.dumps({"job_count": len(json.loads(result).get("jobs", []))}, indent=2))
+    elif args.action == "status":
+        data = json.loads(result)
+        job = data.get("job") or (data.get("jobs") or [{}])[0]
+        print(json.dumps({key: job.get(key) for key in ("job_id", "name", "state", "exit_code")}, indent=2))
     else:
         print(result)
 
