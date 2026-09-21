@@ -1,5 +1,12 @@
 # Laptop → Riker: CPU workflow prototype
 
+## Project documents
+
+- [Defiant S3M proof of concept](docs/defiant-s3m-proof-of-concept.md) records
+  the completed scheduler test and gives a manual, reproducible procedure.
+- [Data-analysis extension plan](docs/data-analysis-extension-plan.md) describes
+  the next milestones for turning this smoke test into an analysis workflow.
+
 ## Scope and decisions
 
 Develop locally, prepare a versioned payload, stage it to Riker, submit a Slurm
