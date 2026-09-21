@@ -56,6 +56,27 @@ Staging uses mkdir and rsync without deletion. Fetch copies the remote run into
 No remote data is removed. The first prototype intentionally has no automatic
 polling, cancellation, submission retries, parameter sweeps or GPU support.
 
+## Defiant S3M test workflow
+
+`s3m_defiant.py` is a separate, direct REST workflow for the Defiant ACE testbed.
+It uses the S3M OpenAPI gateway with a project token header file outside this
+repository. The first request is a one-node, one-task, five-minute CPU smoke test
+on `batch-cpu`, running `hostname` through `srun`. Its working directory must
+already exist and be writable by the project automation user:
+`/lustre/polis/stf053/proj-shared/olcf-s3m-test`.
+
+```bash
+python3 s3m_defiant.py probe --header-file /Users/vga/.config/olcf/stf053-s3m.header --execute
+python3 s3m_defiant.py jobs --header-file /Users/vga/.config/olcf/stf053-s3m.header --execute
+python3 s3m_defiant.py prepare --header-file /Users/vga/.config/olcf/stf053-s3m.header --run-id first
+python3 s3m_defiant.py submit --header-file /Users/vga/.config/olcf/stf053-s3m.header --run-id first
+```
+
+The last command remains preview-only until `--execute` is added. Before any live
+submission, inspect the generated `runs/s3m-<run>/request.json` and confirm that
+the Polis working directory exists with correct project automation-user access.
+S3M is an early-release test API; do not use it as a production workflow.
+
 Submission records an attempt before sending sbatch. A second attempt with the
 same run ID is blocked, including after an interrupted connection. If a response
 is lost, inspect squeue/sacct manually before retrying anything. If a job exists,
@@ -77,5 +98,9 @@ filesystem permissions, authentication, available commands or actual scheduling.
   that can submit Slurm jobs programmatically. It is not part of this initial
   SSH/RSA workflow. If evaluated later, use a least-privilege, project-scoped
   token stored outside Git and never pass it on a command line.
+- https://docs.olcf.ornl.gov/ace_testbed/index.html
+  Consulted 2026-09-21: ACE documents the Defiant testbed. Defiant is the first
+  S3M target that authenticated successfully; use its quick-start guide for any
+  testbed-specific Slurm or environment settings.
 - Prior project discussion: interactive RSA authentication; local-only first
   milestone; keep workflow design, scripts and validation together.
