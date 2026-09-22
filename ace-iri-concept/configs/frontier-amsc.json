@@ -1,0 +1,8 @@
+{
+  "base_url": "https://amsc-moderate.s3m.olcf.ornl.gov/",
+  "facility_name": "olcf-moderate",
+  "resource_name": "Frontier",
+  "account": "stf053",
+  "queue": "batch",
+  "directory": "/lustre/orion/stf053/proj-shared/amsc-iri/"
+}
