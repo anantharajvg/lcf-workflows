@@ -40,6 +40,13 @@ Use separate immutable paths for each run:
 `inputs/` contains immutable, checksum-verified data. `runs/` contains only
 the data and outputs for one submission. Do not overwrite a completed run.
 
+**Permission requirement:** Globus-created directories may not be writable by
+the S3M project automation account. Before a semi-production run, provision the
+run-output tree with permissions that allow both the transfer identity and the
+S3M project automation account to create files. The first integration retry uses
+the existing project-shared root as a temporary output parent because it has the
+required automation-account access.
+
 ## Phase 0: make the scientific contract
 
 Before adding application code, choose one analysis that completes in minutes

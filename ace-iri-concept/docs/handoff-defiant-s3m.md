@@ -25,6 +25,11 @@ The first automated Globus fixture transfer to Odo Wolf2 also completed on
 2026-09-22. The task used the restricted local collection and the NCCS Open DTN
 collection; see [the transfer-test record](globus-transfer-test.md).
 
+The full Globus-to-Odo-to-Globus fixture analysis completed on 2026-09-22 using
+Odo job `44418`; see [the end-to-end test record](odo-globus-end-to-end-test.md).
+The test found that Globus-created directories need explicit provisioning for
+S3M project-automation write access.
+
 The next planned effort is to turn this scheduler smoke test into a small,
 reproducible scientific data-analysis workflow. No scientific application,
 input data, transfer method, or output-validation rule has been chosen yet.

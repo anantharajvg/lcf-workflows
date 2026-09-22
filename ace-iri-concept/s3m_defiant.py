@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 
 def load_config(config_name="defiant-s3m.json"):
-    if config_name not in ("defiant-s3m.json", "odo-s3m.json"):
+    if config_name not in ("defiant-s3m.json", "odo-s3m.json", "odo-e2e-s3m.json"):
         raise ValueError("Unexpected S3M configuration")
     cfg = json.loads((ROOT / "configs" / config_name).read_text())
     if cfg["base_url"] not in (
@@ -25,14 +25,21 @@ def load_config(config_name="defiant-s3m.json"):
     else:
         if cfg["partition"] != "batch" or not cfg["working_directory"].startswith("/gpfs/wolf2/olcf/"):
             raise ValueError("Odo requires batch and a wolf2 working directory")
-    if cfg.get("script_file") not in ("hpc/defiant-smoke.sbatch", "hpc/odo-smoke.sbatch"):
+    if cfg.get("script_file") not in (
+        "hpc/defiant-smoke.sbatch", "hpc/odo-smoke.sbatch", "hpc/odo-globus-e2e.sbatch",
+    ):
         raise ValueError("Unexpected batch script")
+    if config_name == "odo-e2e-s3m.json":
+        if cfg.get("input_directory") != "/gpfs/wolf2/olcf/stf053/proj-shared/ace-iri-concept/inputs/globus-dataset-001":
+            raise ValueError("Unexpected end-to-end input directory")
+        if cfg.get("output_root") != "/gpfs/wolf2/olcf/stf053/proj-shared":
+            raise ValueError("Unexpected end-to-end output directory")
     return cfg
 
 def load_script(cfg):
     path = ROOT / cfg["script_file"]
     script = path.read_text()
-    if not script.startswith("#!/bin/bash\n") or "srun --ntasks=1 /bin/hostname" not in script:
+    if not script.startswith("#!/bin/bash\n") or "srun --ntasks=1" not in script:
         raise ValueError("Batch script is not the expected smoke test")
     return script
 
@@ -58,12 +65,18 @@ def request(cfg, run_id):
         raise ValueError("Invalid run ID")
     resource = cfg["base_url"].rsplit("/", 1)[-1]
     script = load_script(cfg)
+    environment = ["PATH=/usr/bin:/bin"]
+    if "input_directory" in cfg:
+        environment += [
+            f"ACE_IRI_INPUT_DIR={cfg['input_directory']}",
+            f"ACE_IRI_OUTPUT_DIR={cfg['output_root']}/{run_id}",
+        ]
     return {"job": {
         "name": f"ace-iri-{resource}-{run_id}"[:128], "account": cfg["account"],
         "partition": cfg["partition"], "nodes": "1", "tasks": 1,
         "time_limit": {"set": True, "number": 5},
         "current_working_directory": cfg["working_directory"],
-        "environment": ["PATH=/usr/bin:/bin"], "script": script,
+        "environment": environment, "script": script,
     }}
 
 def main():
@@ -71,7 +84,7 @@ def main():
     parser.add_argument("action", choices=("probe", "jobs", "prepare", "submit", "status"))
     parser.add_argument("--header-file", required=True)
     parser.add_argument("--config", default="defiant-s3m.json",
-                        choices=("defiant-s3m.json", "odo-s3m.json"))
+                        choices=("defiant-s3m.json", "odo-s3m.json", "odo-e2e-s3m.json"))
     parser.add_argument("--run-id")
     parser.add_argument("--job-id")
     parser.add_argument("--execute", action="store_true")

@@ -13,6 +13,9 @@
 - [Semi-production scientific workflow plan](docs/semi-production-plan.md)
   defines the next staged work: data transfer, payload execution, validation,
   and recovery.
+- [Odo and Globus end-to-end test](docs/odo-globus-end-to-end-test.md) records
+  the successful input-transfer, Odo-analysis, output-transfer, and local
+  validation loop.
 
 ## Scope and decisions
 

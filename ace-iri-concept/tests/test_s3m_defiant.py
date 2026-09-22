@@ -28,6 +28,13 @@ class S3MDefiantTests(unittest.TestCase):
         self.assertEqual(body["job"]["current_working_directory"], "/gpfs/wolf2/olcf/stf053/proj-shared")
         self.assertTrue(body["job"]["name"].startswith("ace-iri-odo-"))
 
+    def test_end_to_end_configuration_declares_input_and_output_paths(self):
+        body = s.request(s.load_config("odo-e2e-s3m.json"), "e2e-001")
+        environment = body["job"]["environment"]
+        self.assertIn("ACE_IRI_INPUT_DIR=/gpfs/wolf2/olcf/stf053/proj-shared/ace-iri-concept/inputs/globus-dataset-001", environment)
+        self.assertIn("ACE_IRI_OUTPUT_DIR=/gpfs/wolf2/olcf/stf053/proj-shared/e2e-001", environment)
+        self.assertIn("fixture-sum", body["job"]["script"])
+
     def test_invalid_run_id_is_rejected(self):
         with self.assertRaises(ValueError):
             s.request(s.load_config(), "bad/path")
