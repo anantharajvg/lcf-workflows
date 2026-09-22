@@ -24,6 +24,9 @@ completed on 2026-09-22 with return code `0`. Its configuration is
 The next planned effort is to turn this scheduler smoke test into a small,
 reproducible scientific data-analysis workflow. No scientific application,
 input data, transfer method, or output-validation rule has been chosen yet.
+The approved direction is recorded in the
+[semi-production plan](semi-production-plan.md); its first implementation
+decision is the scientific payload and its small input dataset.
 
 ## Important constraints
 

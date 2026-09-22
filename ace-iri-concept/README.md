@@ -10,6 +10,9 @@
   records verified state, constraints, and the next decision needed.
 - [Odo S3M smoke test](docs/odo-s3m-smoke-test.md) records the successful
   Odo submission and reusable procedure.
+- [Semi-production scientific workflow plan](docs/semi-production-plan.md)
+  defines the next staged work: data transfer, payload execution, validation,
+  and recovery.
 
 ## Scope and decisions
 
