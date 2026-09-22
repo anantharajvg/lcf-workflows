@@ -92,11 +92,12 @@ def main() -> None:
 
     if not args.run_id or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,48}", args.run_id):
         parser.error("submit requires a valid --run-id")
+    job_name = f"ace-iri-frontier-{args.run_id}"[:128]
     request = {
         "executable": "/bin/bash",
         "arguments": ["-lc", "set -euo pipefail; echo 'AmSC Frontier CPU smoke test'; date -u +%FT%TZ; hostname"],
         "directory": config["directory"],
-        "name": f"ace-iri-frontier-{args.run_id}"[:128],
+        "name": job_name,
         "queue": config["queue"],
         "account": config["account"],
         "duration": 300,
@@ -108,7 +109,11 @@ def main() -> None:
         print("Preview only. Add --execute only after reviewing this request.")
         return
     job = frontier.submit(**request)
-    print(json.dumps({"job_id": job.id, "state": str(job.state)}, indent=2))
+    print(json.dumps({
+        "job_id": job.id,
+        "state": str(job.state),
+        "expected_stdout": f"{config['directory'].rstrip('/')}/{job_name}.stdout",
+    }, indent=2))
 
 
 if __name__ == "__main__":

@@ -55,8 +55,30 @@ Submit only after reviewing the preview:
   --header-file /Users/vga/.config/olcf/stf053-s3m.header--frontier --execute
 ```
 
-The submission prints only the AmSC job identifier and state. Use the AmSC
-client's job object or the OLCF service to monitor the resulting job.
+The submission prints the AmSC job identifier, its initial state, and the
+expected stdout path. Use a new run ID for every submission; the run ID becomes
+part of the AmSC job name and output filename.
+
+## Manually verify the result
+
+AmSC job-status requests can occasionally fail upstream even when a job was
+accepted. Use Slurm accounting as the authoritative completion check:
+
+```bash
+sacct -X -j <job-id> --format=JobID,JobName,Partition,Account,AllocCPUS,State,ExitCode
+```
+
+Wait for the parent record to show `COMPLETED` and `0:0`. Then inspect the
+files written by AmSC in the configured directory:
+
+```bash
+ls -l /lustre/orion/stf053/proj-shared/amsc-iri/ace-iri-frontier-<run-id>.*
+cat /lustre/orion/stf053/proj-shared/amsc-iri/ace-iri-frontier-<run-id>.stdout
+```
+
+The minimal smoke job prints its label, a UTC timestamp, and its execution-host
+name. It has no intentional stderr output. If AmSC captures stderr for a future
+payload, it will have the same job-name prefix in this directory.
 
 ## Validated smoke test
 

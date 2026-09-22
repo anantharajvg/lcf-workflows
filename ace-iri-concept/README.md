@@ -1,4 +1,4 @@
-# ACE IRI concept: Riker and Defiant workflow prototypes
+# ACE IRI concept: OLCF workflow prototypes
 
 ## Project documents
 
@@ -16,6 +16,8 @@
 - [Odo and Globus end-to-end test](docs/odo-globus-end-to-end-test.md) records
   the successful input-transfer, Odo-analysis, output-transfer, and local
   validation loop.
+- [Frontier AmSC client smoke test](docs/frontier-amsc-client.md) records the
+  successful Moderate-enclave Frontier submission and manual reproduction.
 
 ## Scope and decisions
 
@@ -135,6 +137,28 @@ A missing job in squeue alone does not prove success; consult sacct. Accounting
 may lag. Local simulations cannot validate partition access, site policies,
 filesystem permissions, authentication, available commands or actual scheduling.
 
+## Frontier via AmSC
+
+Frontier uses the OLCF **Moderate** AmSC facility endpoint, not the direct S3M
+OpenAPI endpoint used by Defiant and Odo. The non-secret configuration is in
+`configs/frontier-amsc.json`; the client is `amsc_frontier.py`. The project S3M
+token remains outside the repository in an owner-readable Authorization-header
+file.
+
+The read-only access check is:
+
+```bash
+.venv/bin/python amsc_frontier.py probe \
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--frontier
+```
+
+The first live smoke job, `5529532`, was submitted on 2026-09-22 with one node
+and a five-minute limit. It completed with Slurm exit code `0:0`. AmSC placed
+its stdout at
+`/lustre/orion/stf053/proj-shared/amsc-iri/ace-iri-frontier-frontier-smoke-001.stdout`.
+The precise manual procedure, including installation and Slurm-accounting
+validation, is in [the Frontier AmSC record](docs/frontier-amsc-client.md).
+
 ## Sources
 
 - https://docs.olcf.ornl.gov/systems/riker_user_guide.html
@@ -155,7 +179,7 @@ filesystem permissions, authentication, available commands or actual scheduling.
   much of Frontier's architecture.
 - https://github.com/amsc-interfaces/amsc-client-tutorial/tree/main
   Added 2026-09-21: upstream AmSC Python Client tutorial repository. Its
-  facility and filesystem notebooks are a reference for a later client-based
-  ACE IRI workflow; this project currently uses direct S3M calls instead.
+  facility and filesystem notebooks provide the client pattern used for the
+  Frontier Moderate-enclave workflow.
 - Prior project discussion: interactive RSA authentication; local-only first
   milestone; keep workflow design, scripts and validation together.
