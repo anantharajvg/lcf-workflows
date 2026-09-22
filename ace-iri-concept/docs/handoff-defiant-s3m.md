@@ -17,6 +17,10 @@ The Defiant S3M proof of concept is complete. It submits a small CPU Slurm job
 from a laptop through S3M and reads back its final scheduler state. Two jobs
 completed successfully: `14070` and `14071`.
 
+Odo S3M access is also verified using the Defiant-token header. Odo job `44416`
+completed on 2026-09-22 with return code `0`. Its configuration is
+`configs/odo-s3m.json`; see [the Odo smoke-test record](odo-s3m-smoke-test.md).
+
 The next planned effort is to turn this scheduler smoke test into a small,
 reproducible scientific data-analysis workflow. No scientific application,
 input data, transfer method, or output-validation rule has been chosen yet.
@@ -43,6 +47,7 @@ input data, transfer method, or output-validation rule has been chosen yet.
 | --- | --- |
 | `s3m_defiant.py` | Direct S3M client for Defiant: probe, prepare, submit, and status. |
 | `configs/defiant-s3m.json` | Reviewed non-secret Defiant endpoint, allocation, partition, and working directory. |
+| `configs/odo-s3m.json` | Reviewed non-secret Odo endpoint, allocation, `batch` partition, and GPFS project directory. |
 | `tests/test_s3m_defiant.py` | Local validation of job shape, header permissions, and no-repeat submission protection. |
 | `workflow.py` and `hpc/job.sbatch` | Separate local-first Riker SSH/Slurm prototype; no live Riker submission has occurred. |
 | `docs/defiant-s3m-proof-of-concept.md` | Technical record and manual test procedure. |

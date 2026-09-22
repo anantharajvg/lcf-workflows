@@ -8,6 +8,8 @@
   the next milestones for turning this smoke test into an analysis workflow.
 - [Handoff for the next collaborator or agent](docs/handoff-defiant-s3m.md)
   records verified state, constraints, and the next decision needed.
+- [Odo S3M smoke test](docs/odo-s3m-smoke-test.md) records the successful
+  Odo submission and reusable procedure.
 
 ## Scope and decisions
 
@@ -96,6 +98,28 @@ is lost, inspect squeue/sacct manually before retrying anything. If a job exists
 record its numeric ID in `runs/<run>/job-id.txt` to continue monitoring. Do not
 remove the attempt marker or create a replacement job until its outcome is known.
 
+## Odo S3M smoke test
+
+The same client supports Odo with `--config odo-s3m.json`. Odo's project-shared
+compute filesystem is `/gpfs/wolf2/olcf/stf053/proj-shared` and its active
+compute partition is `batch`. Use an Odo-authorized token header, then prepare
+and inspect a fresh run before submitting:
+
+```bash
+python3 s3m_defiant.py prepare --config odo-s3m.json \
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--defiant \
+  --run-id odo-smoke-001
+cat runs/s3m-odo-smoke-001/request.json
+python3 s3m_defiant.py submit --config odo-s3m.json \
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--defiant \
+  --run-id odo-smoke-001 --execute
+```
+
+Odo is an OLCF training system with Frontier-like GPU nodes. This smoke test
+does not request GPUs explicitly; its one-node allocation is still a live Odo
+batch allocation. Job `44416` completed successfully on 2026-09-22 with return
+code `0`. Consult the current Odo guide before scaling it.
+
 Success requires **both** Slurm COMPLETED/0:0 and a passing numerical check.
 A missing job in squeue alone does not prove success; consult sacct. Accounting
 may lag. Local simulations cannot validate partition access, site policies,
@@ -115,6 +139,10 @@ filesystem permissions, authentication, available commands or actual scheduling.
   Consulted 2026-09-21: ACE documents the Defiant testbed. Defiant is the first
   S3M target that authenticated successfully; use its quick-start guide for any
   testbed-specific Slurm or environment settings.
+- https://docs.olcf.ornl.gov/systems/odo_user_guide.html
+  Consulted 2026-09-22: Odo is an open-enclave training system. Project-shared
+  GPFS storage is `/gpfs/wolf2/olcf/[projid]/proj-shared`; Odo otherwise shares
+  much of Frontier's architecture.
 - https://github.com/amsc-interfaces/amsc-client-tutorial/tree/main
   Added 2026-09-21: upstream AmSC Python Client tutorial repository. Its
   facility and filesystem notebooks are a reference for a later client-based

@@ -20,9 +20,31 @@ class S3MDefiantTests(unittest.TestCase):
         self.assertEqual(body["job"]["tasks"], 1)
         self.assertIn("srun --ntasks=1 /bin/hostname", body["job"]["script"])
 
+    def test_odo_configuration_uses_documented_project_storage(self):
+        cfg = s.load_config("odo-s3m.json")
+        body = s.request(cfg, "trial-01")
+        self.assertEqual(body["job"]["partition"], "batch")
+        self.assertEqual(body["job"]["current_working_directory"], "/gpfs/wolf2/olcf/stf053/proj-shared")
+        self.assertTrue(body["job"]["name"].startswith("ace-iri-odo-"))
+
     def test_invalid_run_id_is_rejected(self):
         with self.assertRaises(ValueError):
             s.request(s.load_config(), "bad/path")
+
+    def test_prepare_allows_an_empty_existing_run_directory(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "configs").mkdir()
+            shutil.copy2(BASE / "configs/defiant-s3m.json", root / "configs/defiant-s3m.json")
+            (root / "runs/s3m-trial").mkdir(parents=True)
+            header = root / "header"
+            header.write_text("Authorization: enough-token-characters-here\n")
+            header.chmod(0o600)
+            with patch.object(s, "ROOT", root), patch("sys.argv", [
+                "s3m_defiant.py", "prepare", "--header-file", str(header), "--run-id", "trial",
+            ]):
+                s.main()
+            self.assertTrue((root / "runs/s3m-trial/request.json").is_file())
 
     def test_submit_command_uses_post_and_request_file(self):
         cmd = s.curl(s.load_config(), Path("/tmp/header"), "/job/submit", "POST", Path("/tmp/request.json"))

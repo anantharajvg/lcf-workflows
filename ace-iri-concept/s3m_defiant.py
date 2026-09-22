@@ -8,16 +8,23 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 
-def load_config():
-    cfg = json.loads((ROOT / "configs/defiant-s3m.json").read_text())
-    if not re.fullmatch(r"https://s3m\.olcf\.ornl\.gov/slurm/open/v0\.0\.43/defiant", cfg["base_url"]):
+def load_config(config_name="defiant-s3m.json"):
+    if config_name not in ("defiant-s3m.json", "odo-s3m.json"):
+        raise ValueError("Unexpected S3M configuration")
+    cfg = json.loads((ROOT / "configs" / config_name).read_text())
+    if cfg["base_url"] not in (
+        "https://s3m.olcf.ornl.gov/slurm/open/v0.0.43/defiant",
+        "https://s3m.olcf.ornl.gov/slurm/open/v0.0.44/odo",
+    ):
         raise ValueError("Unexpected S3M base URL")
     if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]*", cfg["account"]):
         raise ValueError("Invalid account")
-    if cfg["partition"] != "batch-cpu":
-        raise ValueError("This CPU smoke test requires Defiant batch-cpu")
-    if not cfg["working_directory"].startswith("/lustre/polis/"):
-        raise ValueError("Defiant working directory must be on Polis")
+    if cfg["base_url"].endswith("/defiant"):
+        if cfg["partition"] != "batch-cpu" or not cfg["working_directory"].startswith("/lustre/polis/"):
+            raise ValueError("Defiant requires batch-cpu and a Polis working directory")
+    else:
+        if cfg["partition"] != "batch" or not cfg["working_directory"].startswith("/gpfs/wolf2/olcf/"):
+            raise ValueError("Odo requires batch and a wolf2 working directory")
     return cfg
 
 def header_file(path):
@@ -40,12 +47,13 @@ def curl(cfg, header, path, method="GET", body=None):
 def request(cfg, run_id):
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,40}", run_id):
         raise ValueError("Invalid run ID")
+    resource = cfg["base_url"].rsplit("/", 1)[-1]
     script = "\n".join((
-        "#!/bin/bash", "set -euo pipefail", "echo 'S3M Defiant smoke test'",
+        "#!/bin/bash", "set -euo pipefail", f"echo 'S3M {resource} smoke test'",
         "date -u +%FT%TZ", "hostname", "srun --ntasks=1 /bin/hostname",
     )) + "\n"
     return {"job": {
-        "name": f"ace-iri-smoke-{run_id}"[:128], "account": cfg["account"],
+        "name": f"ace-iri-{resource}-{run_id}"[:128], "account": cfg["account"],
         "partition": cfg["partition"], "nodes": "1", "tasks": 1,
         "time_limit": {"set": True, "number": 5},
         "current_working_directory": cfg["working_directory"],
@@ -56,11 +64,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=("probe", "jobs", "prepare", "submit", "status"))
     parser.add_argument("--header-file", required=True)
+    parser.add_argument("--config", default="defiant-s3m.json",
+                        choices=("defiant-s3m.json", "odo-s3m.json"))
     parser.add_argument("--run-id")
     parser.add_argument("--job-id")
     parser.add_argument("--execute", action="store_true")
     args = parser.parse_args()
-    cfg = load_config()
+    cfg = load_config(args.config)
     header = header_file(args.header_file)
     if args.action == "prepare":
         if not args.run_id:
@@ -68,7 +78,7 @@ def main():
         path = ROOT / "runs" / f"s3m-{args.run_id}" / "request.json"
         if path.exists():
             raise FileExistsError("Request already exists; choose a new run ID")
-        path.parent.mkdir(parents=True)
+        path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(request(cfg, args.run_id), indent=2) + "\n")
         print(path)
         return
