@@ -57,3 +57,20 @@ Submit only after reviewing the preview:
 
 The submission prints only the AmSC job identifier and state. Use the AmSC
 client's job object or the OLCF service to monitor the resulting job.
+
+## Validated smoke test
+
+On 2026-09-22, the following submission was accepted through the AmSC client:
+
+| Item | Value |
+| --- | --- |
+| Run ID | `frontier-smoke-001` |
+| Slurm job ID | `5529532` |
+| Requested resources | One Frontier node, five-minute limit |
+| Final Slurm state | `COMPLETED` |
+| Exit code | `0:0` |
+
+The AmSC client returned `queued` on submission. Its subsequent status lookup
+received a transient S3M upstream `502` connection-reset error, so `sacct -j
+5529532` was used to verify the final Slurm result. All three Slurm job records
+(`5529532`, batch, and extern) completed with exit code `0:0`.
