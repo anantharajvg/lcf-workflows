@@ -29,8 +29,10 @@ with Frontier-like hardware.
 | Working directory | `/gpfs/wolf2/olcf/stf053/proj-shared` |
 | Result | `COMPLETED`, exit status `SUCCESS`, return code `0` |
 
-The batch script printed the current date and hostname, then launched
-`srun --ntasks=1 /bin/hostname`. It did not request a GPU explicitly. Odo's
+The source script is [`hpc/odo-smoke.sbatch`](../hpc/odo-smoke.sbatch). During
+`prepare`, the client reads this file and places its contents in the JSON
+`script` field required by S3M. The batch script printed the current date and
+hostname, then launched `srun --ntasks=1 /bin/hostname`. It did not request a GPU explicitly. Odo's
 compute nodes include GPUs, so this small job remains a real one-node batch
 allocation even though the command is CPU-only.
 

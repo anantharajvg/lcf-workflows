@@ -46,6 +46,7 @@ input data, transfer method, or output-validation rule has been chosen yet.
 | File | Role |
 | --- | --- |
 | `s3m_defiant.py` | Direct S3M client for Defiant: probe, prepare, submit, and status. |
+| `hpc/defiant-smoke.sbatch`, `hpc/odo-smoke.sbatch` | Readable batch-script sources loaded into the S3M JSON request during preparation. |
 | `configs/defiant-s3m.json` | Reviewed non-secret Defiant endpoint, allocation, partition, and working directory. |
 | `configs/odo-s3m.json` | Reviewed non-secret Odo endpoint, allocation, `batch` partition, and GPFS project directory. |
 | `tests/test_s3m_defiant.py` | Local validation of job shape, header permissions, and no-repeat submission protection. |

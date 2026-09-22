@@ -22,7 +22,9 @@ The program reads its non-secret settings from
 | Working directory | `/lustre/polis/stf053/proj-shared/olcf-s3m-test` |
 | Resources | 1 node, 1 task, 5 minutes |
 
-The generated batch script prints the date and hostname, then runs
+The source script is [`hpc/defiant-smoke.sbatch`](../hpc/defiant-smoke.sbatch).
+During `prepare`, the client reads this file and embeds it in the S3M JSON
+request. The generated batch script prints the date and hostname, then runs
 `srun --ntasks=1 /bin/hostname`. It is intentionally small: its job is to test
 authentication, job submission, scheduling, and Slurm completion before adding
 a scientific application.

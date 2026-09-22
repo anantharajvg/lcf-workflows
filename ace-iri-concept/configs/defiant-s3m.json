@@ -2,5 +2,6 @@
   "base_url": "https://s3m.olcf.ornl.gov/slurm/open/v0.0.43/defiant",
   "account": "stf053",
   "partition": "batch-cpu",
-  "working_directory": "/lustre/polis/stf053/proj-shared/olcf-s3m-test"
+  "working_directory": "/lustre/polis/stf053/proj-shared/olcf-s3m-test",
+  "script_file": "hpc/defiant-smoke.sbatch"
 }

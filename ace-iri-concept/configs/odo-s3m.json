@@ -2,5 +2,6 @@
   "base_url": "https://s3m.olcf.ornl.gov/slurm/open/v0.0.44/odo",
   "account": "stf053",
   "partition": "batch",
-  "working_directory": "/gpfs/wolf2/olcf/stf053/proj-shared"
+  "working_directory": "/gpfs/wolf2/olcf/stf053/proj-shared",
+  "script_file": "hpc/odo-smoke.sbatch"
 }

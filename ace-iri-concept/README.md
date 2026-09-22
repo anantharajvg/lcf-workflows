@@ -87,6 +87,8 @@ python3 s3m_defiant.py submit --header-file /Users/vga/.config/olcf/stf053-s3m.h
 The last command remains preview-only until `--execute` is added. Before any live
 submission, inspect the generated `runs/s3m-<run>/request.json` and confirm that
 the Polis working directory exists with correct project automation-user access.
+The readable batch-script source is `hpc/defiant-smoke.sbatch`; `prepare` loads
+it into the S3M JSON `script` field required by the API.
 S3M is an early-release test API; do not use it as a production workflow.
 The first live smoke test, job `14070` on 2026-09-21, completed successfully
 with exit code 0. S3M does not currently provide OLCF filesystem access, so the
@@ -118,7 +120,9 @@ python3 s3m_defiant.py submit --config odo-s3m.json \
 Odo is an OLCF training system with Frontier-like GPU nodes. This smoke test
 does not request GPUs explicitly; its one-node allocation is still a live Odo
 batch allocation. Job `44416` completed successfully on 2026-09-22 with return
-code `0`. Consult the current Odo guide before scaling it.
+code `0`. The readable batch-script source is `hpc/odo-smoke.sbatch`; `prepare`
+embeds its contents in the API request. Consult the current Odo guide before
+scaling it.
 
 Success requires **both** Slurm COMPLETED/0:0 and a passing numerical check.
 A missing job in squeue alone does not prove success; consult sacct. Accounting

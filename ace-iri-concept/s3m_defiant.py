@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Token-file-based, explicit S3M operations for the Defiant testbed."""
+"""Token-file-based, explicit S3M operations for Defiant and Odo."""
 import argparse
 import json
 import re
@@ -25,7 +25,16 @@ def load_config(config_name="defiant-s3m.json"):
     else:
         if cfg["partition"] != "batch" or not cfg["working_directory"].startswith("/gpfs/wolf2/olcf/"):
             raise ValueError("Odo requires batch and a wolf2 working directory")
+    if cfg.get("script_file") not in ("hpc/defiant-smoke.sbatch", "hpc/odo-smoke.sbatch"):
+        raise ValueError("Unexpected batch script")
     return cfg
+
+def load_script(cfg):
+    path = ROOT / cfg["script_file"]
+    script = path.read_text()
+    if not script.startswith("#!/bin/bash\n") or "srun --ntasks=1 /bin/hostname" not in script:
+        raise ValueError("Batch script is not the expected smoke test")
+    return script
 
 def header_file(path):
     p = Path(path).expanduser().resolve()
@@ -48,10 +57,7 @@ def request(cfg, run_id):
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,40}", run_id):
         raise ValueError("Invalid run ID")
     resource = cfg["base_url"].rsplit("/", 1)[-1]
-    script = "\n".join((
-        "#!/bin/bash", "set -euo pipefail", f"echo 'S3M {resource} smoke test'",
-        "date -u +%FT%TZ", "hostname", "srun --ntasks=1 /bin/hostname",
-    )) + "\n"
+    script = load_script(cfg)
     return {"job": {
         "name": f"ace-iri-{resource}-{run_id}"[:128], "account": cfg["account"],
         "partition": cfg["partition"], "nodes": "1", "tasks": 1,

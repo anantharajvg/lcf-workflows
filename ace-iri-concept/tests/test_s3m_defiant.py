@@ -19,6 +19,7 @@ class S3MDefiantTests(unittest.TestCase):
         self.assertEqual(body["job"]["nodes"], "1")
         self.assertEqual(body["job"]["tasks"], 1)
         self.assertIn("srun --ntasks=1 /bin/hostname", body["job"]["script"])
+        self.assertEqual(body["job"]["script"], (BASE / "hpc/defiant-smoke.sbatch").read_text())
 
     def test_odo_configuration_uses_documented_project_storage(self):
         cfg = s.load_config("odo-s3m.json")
@@ -35,7 +36,9 @@ class S3MDefiantTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             (root / "configs").mkdir()
+            (root / "hpc").mkdir()
             shutil.copy2(BASE / "configs/defiant-s3m.json", root / "configs/defiant-s3m.json")
+            shutil.copy2(BASE / "hpc/defiant-smoke.sbatch", root / "hpc/defiant-smoke.sbatch")
             (root / "runs/s3m-trial").mkdir(parents=True)
             header = root / "header"
             header.write_text("Authorization: enough-token-characters-here\n")
