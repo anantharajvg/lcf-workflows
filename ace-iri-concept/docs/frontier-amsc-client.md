@@ -74,3 +74,13 @@ The AmSC client returned `queued` on submission. Its subsequent status lookup
 received a transient S3M upstream `502` connection-reset error, so `sacct -j
 5529532` was used to verify the final Slurm result. All three Slurm job records
 (`5529532`, batch, and extern) completed with exit code `0:0`.
+
+AmSC stored the smoke job's standard output using its job name, rather than
+Slurm's usual `slurm-<job-id>.out` convention:
+
+```text
+/lustre/orion/stf053/proj-shared/amsc-iri/ace-iri-frontier-frontier-smoke-001.stdout
+```
+
+For future runs, look in the configured staging directory for files whose
+prefix matches the submitted AmSC job name.
