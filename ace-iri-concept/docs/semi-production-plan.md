@@ -78,6 +78,10 @@ known. No Globus credential belongs in Git.
 **Exit criterion:** two independent transfers of the same small input produce
 the same Wolf2 checksum manifest.
 
+The first pilot transfer completed on 2026-09-22; see
+[Globus transfer test: dataset 001](globus-transfer-test.md). Repeat it once
+before treating the transfer lane as established.
+
 ## Phase 2: create the scientific run package
 
 Extend `prepare` to create a local, ignored run directory containing:

@@ -21,6 +21,10 @@ Odo S3M access is also verified using the Defiant-token header. Odo job `44416`
 completed on 2026-09-22 with return code `0`. Its configuration is
 `configs/odo-s3m.json`; see [the Odo smoke-test record](odo-s3m-smoke-test.md).
 
+The first automated Globus fixture transfer to Odo Wolf2 also completed on
+2026-09-22. The task used the restricted local collection and the NCCS Open DTN
+collection; see [the transfer-test record](globus-transfer-test.md).
+
 The next planned effort is to turn this scheduler smoke test into a small,
 reproducible scientific data-analysis workflow. No scientific application,
 input data, transfer method, or output-validation rule has been chosen yet.
