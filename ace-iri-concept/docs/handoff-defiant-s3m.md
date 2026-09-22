@@ -104,3 +104,5 @@ the result checker. Start with synthetic or public small data and one CPU.
 - [OLCF S3M overview](https://docs.olcf.ornl.gov/services_and_applications/s3m/overview.html)
 - [Defiant quick-start guide](https://docs.olcf.ornl.gov/ace_testbed/defiant_quick_start_guide.html)
 - [Riker user guide](https://docs.olcf.ornl.gov/systems/riker_user_guide.html)
+- [AmSC client tutorial repository](https://github.com/amsc-interfaces/amsc-client-tutorial/tree/main)
+  — upstream reference for later Python-client and filesystem workflow work.

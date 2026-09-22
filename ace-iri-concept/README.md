@@ -115,5 +115,9 @@ filesystem permissions, authentication, available commands or actual scheduling.
   Consulted 2026-09-21: ACE documents the Defiant testbed. Defiant is the first
   S3M target that authenticated successfully; use its quick-start guide for any
   testbed-specific Slurm or environment settings.
+- https://github.com/amsc-interfaces/amsc-client-tutorial/tree/main
+  Added 2026-09-21: upstream AmSC Python Client tutorial repository. Its
+  facility and filesystem notebooks are a reference for a later client-based
+  ACE IRI workflow; this project currently uses direct S3M calls instead.
 - Prior project discussion: interactive RSA authentication; local-only first
   milestone; keep workflow design, scripts and validation together.

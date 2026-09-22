@@ -5,6 +5,11 @@ small CPU job to Defiant and observe its final Slurm state. The next goal is a
 reproducible analysis run with declared inputs, an application command, and
 results that can be checked after the job finishes.
 
+The [AmSC client tutorial repository](https://github.com/amsc-interfaces/amsc-client-tutorial/tree/main)
+is an upstream reference for a possible Python-client implementation. Evaluate
+its facility and filesystem patterns only after confirming which OLCF endpoints
+and features are available for Defiant.
+
 ## Milestone 1: define one small analysis
 
 Choose one scientific calculation that can run in a few minutes on one CPU.
