@@ -110,7 +110,19 @@ def main() -> None:
         print(json.dumps(request, indent=2))
         print("Preview only. Add --execute only after reviewing this request.")
         return
-    job = frontier.submit(**request)
+    try:
+        job = frontier.submit(**request)
+    except KeyError as error:
+        # iri-api-autogen 0.1.2 attempts to parse a non-RFC7807 401 response
+        # as a Problem object and raises KeyError("type") instead. Do not hide
+        # the likely authentication failure behind that client-library error.
+        if error.args == ("type",):
+            raise RuntimeError(
+                "AmSC rejected the request as unauthorized. Generate or select "
+                "a Frontier/OLCF Moderate S3M token, update the external header "
+                "file, and use a new run ID before retrying."
+            ) from None
+        raise
     print(json.dumps({
         "job_id": job.id,
         "state": str(job.state),
@@ -120,4 +132,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except RuntimeError as error:
+        raise SystemExit(f"error: {error}") from None

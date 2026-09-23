@@ -41,6 +41,10 @@ and submitted job `5529532` using allocation `stf053`, queue `batch`, and
 `ace-iri-frontier-frontier-smoke-001.stdout` in that staging directory.
 The AmSC job-status query subsequently returned a transient upstream S3M 502;
 use `sacct` to verify future jobs until that service behavior is resolved.
+On a later submission attempt, the configured Frontier header returned HTTP 401
+with `{"code":16,"message":"unauthorized"}`. Public resource discovery can
+still succeed in that condition. Renew or select a Frontier/OLCF Moderate S3M
+token before the next submission; use a new run ID after any failed attempt.
 
 The next planned effort is to turn this scheduler smoke test into a small,
 reproducible scientific data-analysis workflow. No scientific application,

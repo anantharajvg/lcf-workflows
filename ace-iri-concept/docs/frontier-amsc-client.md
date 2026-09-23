@@ -26,7 +26,7 @@ the Moderate facility, and the approved staging directory:
 That directory must remain writable by the OLCF project automation account as
 well as by the project users.
 
-## Verify access
+## Discover the resource
 
 The probe is read-only. It reads the header file directly and never prints its
 token value.
@@ -37,6 +37,8 @@ token value.
 ```
 
 Expected output identifies resource `Frontier` and reports `"status": "up"`.
+Resource discovery is public, so this check confirms the client and endpoint
+but does **not** prove that a token can submit jobs.
 
 ## Review a smoke submission
 
@@ -81,6 +83,16 @@ cat /lustre/orion/stf053/proj-shared/amsc-iri/ace-iri-frontier-<run-id>-<utc-tim
 The minimal smoke job prints its label, a UTC timestamp, and its execution-host
 name. It has no intentional stderr output. If AmSC captures stderr for a future
 payload, it will have the same job-name prefix in this directory.
+
+## Authentication failure
+
+If submission reports that AmSC rejected the request as unauthorized, generate
+or select a new S3M token authorized for **Frontier** in the **OLCF Moderate**
+enclave. Replace the contents of the external header file only; never add the
+token to this repository. Then use a new run ID for the next submission.
+
+The resource probe can still report Frontier as `up` with an unauthorized token,
+because resource discovery is a public endpoint.
 
 ## Validated smoke test
 
