@@ -1,0 +1,9 @@
+{
+  "source_collection": "c19812b1-b676-11f1-adf4-0effcb3df825",
+  "destination_collection": "7399956e-a57b-4560-b3d7-a035ff42cad4",
+  "local_input": "fixtures/globus-dataset-001",
+  "remote_input": "/gpfs/wolf2/olcf/stf053/proj-shared/ace-iri-concept/inputs/globus-dataset-001",
+  "remote_output_root": "/gpfs/wolf2/olcf/stf053/proj-shared",
+  "local_output_root": "fixtures/globus-dataset-001/retrieved",
+  "s3m_config": "odo-e2e-s3m.json"
+}

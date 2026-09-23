@@ -16,6 +16,8 @@
 - [Odo and Globus end-to-end test](docs/odo-globus-end-to-end-test.md) records
   the successful input-transfer, Odo-analysis, output-transfer, and local
   validation loop.
+- [Odo–Globus orchestrator](docs/odo-globus-orchestrator.md) documents the
+  stateful command that runs the validated fixture workflow end to end.
 - [Frontier AmSC client smoke test](docs/frontier-amsc-client.md) records the
   successful Moderate-enclave Frontier submission and manual reproduction.
 

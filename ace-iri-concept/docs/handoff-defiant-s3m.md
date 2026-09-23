@@ -95,6 +95,9 @@ decision is the scientific payload and its small input dataset.
 | `amsc_frontier.py` | Frontier AmSC client: read-only probe and explicitly gated CPU smoke submission. |
 | `configs/frontier-amsc.json` | Non-secret OLCF Moderate endpoint, allocation, queue, and approved staging directory. |
 | `docs/frontier-amsc-client.md` | Setup, manual reproduction, validated job record, and output retrieval. |
+| `odo_globus_e2e.py` | Stateful local-to-Globus-to-Odo-to-Globus fixture orchestrator. |
+| `configs/odo-globus-e2e.json` | Non-secret collection IDs and fixture input/output paths for the orchestrator. |
+| `docs/odo-globus-orchestrator.md` | Manual preparation, execution, validation, and recovery guidance. |
 
 `s3m_defiant.py` creates a JSON request for one node, one task, and five
 minutes. Its script prints basic host information and runs
