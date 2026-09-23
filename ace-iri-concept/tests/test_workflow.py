@@ -11,7 +11,9 @@ import unittest
 from unittest.mock import patch
 
 BASE = Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location('workflow', BASE / 'workflow.py')
+spec = importlib.util.spec_from_file_location(
+    'workflow', BASE / 'interactive-workflows' / 'workflow.py'
+)
 w = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(w)
 

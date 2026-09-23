@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Explicit, human-operated Riker workflow. Remote actions default to preview."""
+"""Explicit, human-operated Frontier workflow. Remote actions default to preview."""
 import argparse
 import hashlib
 import json
@@ -9,8 +9,10 @@ import shutil
 import subprocess
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
-PAYLOAD = ('src/smoke.sh', 'hpc/job.sbatch', 'configs/riker.json')
+# This script lives below the project root; payloads, configurations, and
+# generated runs remain at the project root.
+ROOT = Path(__file__).resolve().parent.parent
+PAYLOAD = ('src/smoke.sh', 'hpc/job.sbatch', 'configs/frontier.json')
 SSH = ['ssh', '-o', 'ControlMaster=no', '-o', 'ControlPath=none', '-o',
        'PreferredAuthentications=keyboard-interactive,password']
 
@@ -77,7 +79,7 @@ def main():
         print(prepare(args.run_id))
         return
     verify(dest)
-    cfg = json.loads((dest / 'configs/riker.json').read_text())
+    cfg = json.loads((dest / 'configs/frontier.json').read_text())
     if not re.fullmatch(r'[A-Za-z0-9_.-]+@[A-Za-z0-9.-]+', cfg['host']):
         raise ValueError('Invalid host')
     if not re.fullmatch(r'/[A-Za-z0-9_./-]+', cfg['remote_root']) or '..' in cfg['remote_root'].split('/'):

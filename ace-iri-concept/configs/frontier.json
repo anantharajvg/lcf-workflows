@@ -1,0 +1,5 @@
+{
+  "host": "vga@frontier.olcf.ornl.gov",
+  "account": "stf053",
+  "remote_root": "/lustre/orion/stf053/scratch/vga/ace-iri-concept"
+}
