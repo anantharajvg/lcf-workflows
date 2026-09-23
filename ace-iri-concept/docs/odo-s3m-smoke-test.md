@@ -12,7 +12,7 @@ with Frontier-like hardware.
 
 ## Verified access and scheduler settings
 
-- The Defiant-token header returned `HTTP 200` from Odo's S3M ping endpoint.
+- The Open-enclave token header returned `HTTP 200` from Odo's S3M ping endpoint.
 - The S3M partition endpoint reported that `batch` was up.
 - Odo's documented project-shared compute filesystem is
   `/gpfs/wolf2/olcf/stf053/proj-shared`.

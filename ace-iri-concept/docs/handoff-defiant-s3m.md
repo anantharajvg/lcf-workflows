@@ -25,7 +25,7 @@ The project owner repeated the full Defiant manual procedure successfully on
 recorded; see [the Defiant proof-of-concept record](defiant-s3m-proof-of-concept.md)
 for the reproducible procedure and earlier recorded job IDs.
 
-Odo S3M access is also verified using the Defiant-token header. Odo job `44416`
+Odo S3M access is also verified using the Open-enclave token header. Odo job `44416`
 completed on 2026-09-22 with return code `0`. Its configuration is
 `configs/odo-s3m.json`; see [the Odo smoke-test record](odo-s3m-smoke-test.md).
 

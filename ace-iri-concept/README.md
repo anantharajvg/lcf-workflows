@@ -21,6 +21,9 @@
   2026-09-23.
 - [Frontier AmSC client smoke test](docs/frontier-amsc-client.md) records the
   successful Moderate-enclave Frontier submission and manual reproduction.
+- [Research integrity and reproducibility](docs/research-integrity.md) defines
+  provenance, validation, data-lineage, and release requirements for future
+  scientific payloads.
 
 ## Contributors
 
