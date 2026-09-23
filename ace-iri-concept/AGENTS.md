@@ -1,5 +1,14 @@
 # ACE IRI concept: OLCF workflows
 
+## Git workflow
+
+- Never make changes, commits, or pushes directly on `main`.
+- Start each new unit of work on a descriptive branch created from an updated
+  `main` branch, such as `feature/odo-payload` or `docs/reproduction-guide`.
+- Commit and push work to that branch. Merge it into `main` only after review
+  and explicit user authorization.
+- Release tags are created from reviewed snapshots on `main`.
+
 - Target Riker, user vga, allocation stf053. Do not use Frontier templates.
 - Keep authentication interactive and human-controlled. Never collect or store RSA credentials.
 - The SSH/Riker workflow remains local-only until explicitly authorized. The Defiant
