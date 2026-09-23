@@ -29,6 +29,118 @@
 - **Codex (OpenAI)** — coding-agent assistance with workflow implementation,
   testing, and technical documentation.
 
+## Reproduce the validated workflows
+
+Run every command from this directory:
+
+```bash
+cd /Users/vga/projects/lcf-workflows/ace-iri-concept
+make test
+```
+
+Each live workflow needs a fresh run ID. Never rerun a submission command with
+the same ID after an interrupted response; inspect its saved run record, Globus
+task, or S3M job first.
+
+### 1. Defiant S3M CPU smoke test
+
+Defiant uses the Open-enclave token. The job writes scheduler output only; this
+S3M route does not retrieve files to the laptop.
+
+```bash
+HEADER=/Users/vga/.config/olcf/stf053-s3m.header--open
+RUN_ID="defiant-$(date -u +%Y%m%dT%H%M%SZ)"
+
+# Read-only S3M authentication check.
+python3 s3m_defiant.py probe --config defiant-s3m.json \
+  --header-file "$HEADER" --execute
+
+# Create and inspect the request before submission.
+python3 s3m_defiant.py prepare --config defiant-s3m.json \
+  --header-file "$HEADER" --run-id "$RUN_ID"
+cat "runs/s3m-$RUN_ID/request.json"
+
+# Submit once, then copy the returned job ID.
+python3 s3m_defiant.py submit --config defiant-s3m.json \
+  --header-file "$HEADER" --run-id "$RUN_ID" --execute
+
+JOB_ID=<returned-job-id>
+python3 s3m_defiant.py status --config defiant-s3m.json \
+  --header-file "$HEADER" --job-id "$JOB_ID" --execute
+```
+
+Success is `COMPLETED` with return code `0`. See
+[the Defiant record](docs/defiant-s3m-proof-of-concept.md) for evidence and
+troubleshooting.
+
+### 2. Odo–Globus end-to-end fixture workflow
+
+This runs the checksum-validated fixture through local Globus → Odo → local
+Globus. It requires Globus Connect Personal to be running and one-time Globus
+CLI authentication.
+
+```bash
+.venv/bin/globus whoami || .venv/bin/globus login
+
+HEADER=/Users/vga/.config/olcf/stf053-s3m.header--open
+RUN_ID="globus-e2e-$(date -u +%Y%m%dT%H%M%SZ)"
+
+# Create and inspect the saved run record; this makes no network request.
+python3 odo_globus_e2e.py prepare --run-id "$RUN_ID"
+python3 odo_globus_e2e.py run --run-id "$RUN_ID" \
+  --header-file "$HEADER"
+
+# Submit the two Globus tasks and Odo job, wait for each stage, and validate
+# the returned result and checksums.
+python3 odo_globus_e2e.py run --run-id "$RUN_ID" \
+  --header-file "$HEADER" --execute
+```
+
+On success, the script prints the input Globus task ID, Odo job ID, output
+Globus task ID, and result `4.000`. The state is retained in
+`runs/odo-globus-<run-id>/record.json`. See
+[the orchestrator guide](docs/odo-globus-orchestrator.md) for recovery rules.
+
+### 3. Frontier AmSC CPU smoke test
+
+Frontier uses the Moderate-enclave AmSC API and token. Install the tutorial
+client once in the ignored local virtual environment:
+
+```bash
+.venv/bin/python -m pip install \
+  --extra-index-url https://gitlab.com/api/v4/projects/77567162/packages/pypi/simple \
+  --extra-index-url https://gitlab.com/api/v4/projects/76368190/packages/pypi/simple \
+  --extra-index-url https://gitlab.com/api/v4/projects/80654726/packages/pypi/simple \
+  'amsc-client>=0.4.1,<0.5'
+
+HEADER=/Users/vga/.config/olcf/stf053-s3m.header--moderate
+RUN_ID="frontier-smoke-$(date -u +%Y%m%dT%H%M%SZ)"
+
+.venv/bin/python amsc_frontier.py probe --header-file "$HEADER"
+.venv/bin/python amsc_frontier.py submit --run-id "$RUN_ID" \
+  --header-file "$HEADER"
+.venv/bin/python amsc_frontier.py submit --run-id "$RUN_ID" \
+  --header-file "$HEADER" --execute
+```
+
+Use the returned job ID for final Slurm accounting and the printed job name to
+retrieve the output:
+
+```bash
+sacct -X -j <job-id> \
+  --format=JobID,JobName,Partition,Account,AllocCPUS,State,ExitCode
+cat /lustre/orion/stf053/proj-shared/amsc-iri/<job-name>.stdout
+```
+
+Success is `COMPLETED` with `0:0`. See
+[the Frontier guide](docs/frontier-amsc-client.md) for token and output details.
+
+### Interactive SSH prototype
+
+The separate Riker and experimental direct-SSH Frontier examples are in
+[interactive-workflows](interactive-workflows/README.md). They are not part of
+the three validated API workflows above.
+
 ## Scope and decisions
 
 Develop locally, prepare a versioned payload, stage it to Riker, submit a Slurm
@@ -53,9 +165,9 @@ request. Slurm launches the workload through srun on a compute node.
 ```bash
 cd /Users/vga/projects/lcf-workflows/ace-iri-concept
 make test
-python3 workflow.py prepare smoke-001
-python3 workflow.py stage smoke-001
-python3 workflow.py submit smoke-001
+python3 interactive-workflows/workflow.py prepare smoke-001
+python3 interactive-workflows/workflow.py stage smoke-001
+python3 interactive-workflows/workflow.py submit smoke-001
 ```
 
 Prepare writes only local files. All remote actions **preview by default**.
@@ -68,12 +180,12 @@ is snapshotted per run. Prepare a new run after changing source or configuration
 Only after authorizing a real cluster test, execute these in your own terminal:
 
 ```bash
-python3 workflow.py stage smoke-001 --execute
-python3 workflow.py submit smoke-001 --execute
-python3 workflow.py status smoke-001 --execute
+python3 interactive-workflows/workflow.py stage smoke-001 --execute
+python3 interactive-workflows/workflow.py submit smoke-001 --execute
+python3 interactive-workflows/workflow.py status smoke-001 --execute
 # After status shows COMPLETED with ExitCode 0:0:
-python3 workflow.py fetch smoke-001 --execute
-python3 workflow.py check smoke-001
+python3 interactive-workflows/workflow.py fetch smoke-001 --execute
+python3 interactive-workflows/workflow.py check smoke-001
 ```
 
 SSH/RSA prompts remain in your terminal. SSH multiplexing is disabled. Each SSH
