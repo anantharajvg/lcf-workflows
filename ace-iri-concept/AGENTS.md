@@ -49,6 +49,20 @@
 
 - Validate local changes with `make test`. Shell syntax and simulated remote
   operations do not establish cluster compatibility.
+- Before a live scientific run, define its input dataset, scientific question,
+  expected outputs, acceptance criteria, and validation method. Scheduler
+  success alone does not establish scientific validity.
+- Record selected provenance for every live run: UTC start and finish times,
+  Git commit and release tag, configuration checksum, input and output
+  checksums, exact command, system, job ID, Globus task IDs, and final state.
+- Record the application version, relevant modules, container image digest when
+  used, and random seed. Do not dump the full process environment.
+- Keep raw inputs immutable. Record their source, classification, authorization
+  or license, transfer lineage, and durable storage location. Keep large raw
+  and derived data outside Git, but commit a reviewed metadata summary and
+  checksums.
+- Require an independent rerun from a clean checkout or separate environment
+  before describing a scientific payload as reproducible.
 - Call a workflow validated only when the documented record includes the
   command path, final scheduler and transfer state, identifiers, result check,
   checksum evidence where applicable, and known limitations.
@@ -57,3 +71,6 @@
   files under `configs/`.
 - Do not log the full process environment. Record only selected provenance.
 - Never commit runs, results, credentials, or large datasets.
+- Maintain `CITATION.cff`. Before an external release, choose and add a license,
+  archive durable scientific artifacts, and update the release documentation.
+- Follow the sources in `docs/research-integrity.md` when applying these rules.
