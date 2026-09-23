@@ -17,7 +17,8 @@
   the successful input-transfer, Odo-analysis, output-transfer, and local
   validation loop.
 - [Odo–Globus orchestrator](docs/odo-globus-orchestrator.md) documents the
-  stateful command that runs the validated fixture workflow end to end.
+  stateful command that ran the validated fixture workflow end to end on
+  2026-09-23.
 - [Frontier AmSC client smoke test](docs/frontier-amsc-client.md) records the
   successful Moderate-enclave Frontier submission and manual reproduction.
 

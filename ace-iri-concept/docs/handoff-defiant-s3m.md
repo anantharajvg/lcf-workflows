@@ -38,6 +38,13 @@ Odo job `44418`; see [the end-to-end test record](odo-globus-end-to-end-test.md)
 The test found that Globus-created directories need explicit provisioning for
 S3M project-automation write access.
 
+The stateful Odo–Globus orchestrator completed the same fixture workflow on
+2026-09-23. Input Globus task `28f5b1ec-b777-11f1-8240-02ffe792127d`, Odo job
+`44434`, and output Globus task `3f529ff6-b777-11f1-815f-0affd5e180af` all
+succeeded. The Odo return code was `0`; the four returned output files and
+their checksums validated locally. See
+[the orchestrator guide](odo-globus-orchestrator.md).
+
 The Frontier AmSC smoke test completed on 2026-09-22. AmSC client version
 `0.4.3` registered the OLCF Moderate facility, discovered resource `Frontier`,
 and submitted job `5529532` using allocation `stf053`, queue `batch`, and

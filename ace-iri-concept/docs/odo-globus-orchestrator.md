@@ -73,3 +73,13 @@ only after Odo reports `COMPLETED` with return code `0`, avoiding the earlier
 The fixture input path is intentionally fixed and checksum-validated. A new
 scientific dataset needs a new configuration and a payload checksum update; do
 not overwrite the fixture path to reuse this script for scientific data.
+
+## Validated run
+
+The full orchestration completed successfully on 2026-09-23 with run ID
+`globus-e2e-20260923T174943Z`. It recorded input task
+`28f5b1ec-b777-11f1-8240-02ffe792127d`, Odo job `44434`, and output task
+`3f529ff6-b777-11f1-815f-0affd5e180af`. Odo completed with return code `0`;
+the output task returned four files with no faults, and local checksum
+validation passed. The input task copied zero bytes because its checksum-sync
+mode found the fixture already matched the remote destination.
