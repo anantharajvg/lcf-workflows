@@ -22,6 +22,13 @@
 - [Frontier AmSC client smoke test](docs/frontier-amsc-client.md) records the
   successful Moderate-enclave Frontier submission and manual reproduction.
 
+## Contributors
+
+- **vga** — project owner, OLCF user, workflow validation, and operational
+  decisions.
+- **Codex (OpenAI)** — coding-agent assistance with workflow implementation,
+  testing, and technical documentation.
+
 ## Scope and decisions
 
 Develop locally, prepare a versioned payload, stage it to Riker, submit a Slurm
