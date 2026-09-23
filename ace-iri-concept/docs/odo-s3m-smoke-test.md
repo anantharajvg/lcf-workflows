@@ -44,7 +44,7 @@ First run local checks, then create a **new** run ID and inspect the request:
 cd /Users/vga/projects/lcf-workflows/ace-iri-concept
 make test
 python3 s3m_defiant.py prepare --config odo-s3m.json \
-  --header-file /Users/vga/.config/olcf/stf053-s3m.header--defiant \
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--open \
   --run-id odo-smoke-002
 cat runs/s3m-odo-smoke-002/request.json
 ```
@@ -53,10 +53,10 @@ After reviewing the request and obtaining authorization for a live job:
 
 ```bash
 python3 s3m_defiant.py submit --config odo-s3m.json \
-  --header-file /Users/vga/.config/olcf/stf053-s3m.header--defiant \
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--open \
   --run-id odo-smoke-002 --execute
 python3 s3m_defiant.py status --config odo-s3m.json \
-  --header-file /Users/vga/.config/olcf/stf053-s3m.header--defiant \
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--open \
   --job-id JOB_ID --execute
 ```
 

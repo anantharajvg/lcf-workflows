@@ -86,10 +86,10 @@ already exist and be writable by the project automation user:
 remote path has not been renamed as part of the local project rename.
 
 ```bash
-python3 s3m_defiant.py probe --header-file /Users/vga/.config/olcf/stf053-s3m.header --execute
-python3 s3m_defiant.py jobs --header-file /Users/vga/.config/olcf/stf053-s3m.header --execute
-python3 s3m_defiant.py prepare --header-file /Users/vga/.config/olcf/stf053-s3m.header --run-id first
-python3 s3m_defiant.py submit --header-file /Users/vga/.config/olcf/stf053-s3m.header --run-id first
+python3 s3m_defiant.py probe --header-file /Users/vga/.config/olcf/stf053-s3m.header--open --execute
+python3 s3m_defiant.py jobs --header-file /Users/vga/.config/olcf/stf053-s3m.header--open --execute
+python3 s3m_defiant.py prepare --header-file /Users/vga/.config/olcf/stf053-s3m.header--open --run-id first
+python3 s3m_defiant.py submit --header-file /Users/vga/.config/olcf/stf053-s3m.header--open --run-id first
 ```
 
 The last command remains preview-only until `--execute` is added. Before any live
@@ -117,11 +117,11 @@ and inspect a fresh run before submitting:
 
 ```bash
 python3 s3m_defiant.py prepare --config odo-s3m.json \
-  --header-file /Users/vga/.config/olcf/stf053-s3m.header--defiant \
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--open \
   --run-id odo-smoke-001
 cat runs/s3m-odo-smoke-001/request.json
 python3 s3m_defiant.py submit --config odo-s3m.json \
-  --header-file /Users/vga/.config/olcf/stf053-s3m.header--defiant \
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--open \
   --run-id odo-smoke-001 --execute
 ```
 
@@ -149,7 +149,7 @@ The read-only access check is:
 
 ```bash
 .venv/bin/python amsc_frontier.py probe \
-  --header-file /Users/vga/.config/olcf/stf053-s3m.header--frontier
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--moderate
 ```
 
 The first live smoke job, `5529532`, was submitted on 2026-09-22 with one node

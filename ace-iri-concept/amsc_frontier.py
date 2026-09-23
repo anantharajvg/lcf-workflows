@@ -16,7 +16,7 @@ from amsc_client import Client
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_CONFIG = ROOT / "configs" / "frontier-amsc.json"
-DEFAULT_HEADER = Path("/Users/vga/.config/olcf/stf053-s3m.header--frontier")
+DEFAULT_HEADER = Path("/Users/vga/.config/olcf/stf053-s3m.header--moderate")
 
 
 def load_config(path: Path) -> dict:

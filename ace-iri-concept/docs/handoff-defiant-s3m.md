@@ -59,9 +59,10 @@ decision is the scientific payload and its small input dataset.
 - Use Defiant for the S3M prototype, with partition `batch-cpu`.
 - The tested shared working directory is
   `/lustre/polis/stf053/proj-shared/olcf-s3m-test`.
-- The S3M token header file is outside Git at
-  `/Users/vga/.config/olcf/stf053-s3m.header`. Do not display, copy, log, or
-  commit its contents. It must remain readable only by its owner.
+- The S3M Open-enclave token header file is outside Git at
+  `/Users/vga/.config/olcf/stf053-s3m.header--open`. Use it for Defiant and
+  Odo. Do not display, copy, log, or commit its contents. It must remain
+  readable only by its owner.
 - `runs/` is ignored by Git. It contains generated job requests and responses.
 - Do not submit, cancel, or retry a live job without the user's explicit
   authorization for that operation.
@@ -70,8 +71,8 @@ decision is the scientific payload and its small input dataset.
   proof of concept.
 - Frontier is now validated only through the AmSC client and the OLCF Moderate
   endpoint.
-- The Frontier S3M header file is outside Git at
-  `/Users/vga/.config/olcf/stf053-s3m.header--frontier`. Treat it as secret and
+- The Frontier Moderate-enclave S3M header file is outside Git at
+  `/Users/vga/.config/olcf/stf053-s3m.header--moderate`. Treat it as secret and
   do not display, copy, log, or commit it.
 
 ## What was implemented
@@ -111,7 +112,7 @@ request:
 
 ```bash
 python3 s3m_defiant.py probe \
-  --header-file /Users/vga/.config/olcf/stf053-s3m.header \
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--open \
   --execute
 ```
 
@@ -130,12 +131,12 @@ in [the Frontier AmSC record](frontier-amsc-client.md). The short procedure is:
 ```bash
 cd /Users/vga/projects/lcf-workflows/ace-iri-concept
 .venv/bin/python amsc_frontier.py probe \
-  --header-file /Users/vga/.config/olcf/stf053-s3m.header--frontier
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--moderate
 .venv/bin/python amsc_frontier.py submit --run-id frontier-smoke-002 \
-  --header-file /Users/vga/.config/olcf/stf053-s3m.header--frontier
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--moderate
 # Review the JSON preview, then only with the user's explicit approval:
 .venv/bin/python amsc_frontier.py submit --run-id frontier-smoke-002 \
-  --header-file /Users/vga/.config/olcf/stf053-s3m.header--frontier --execute
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--moderate --execute
 ```
 
 Use the returned job ID to check final state, then retrieve stdout by its AmSC

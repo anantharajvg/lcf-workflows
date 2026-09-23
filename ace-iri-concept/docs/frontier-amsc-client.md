@@ -33,7 +33,7 @@ token value.
 
 ```bash
 .venv/bin/python amsc_frontier.py probe \
-  --header-file /Users/vga/.config/olcf/stf053-s3m.header--frontier
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--moderate
 ```
 
 Expected output identifies resource `Frontier` and reports `"status": "up"`.
@@ -47,14 +47,14 @@ change:
 
 ```bash
 .venv/bin/python amsc_frontier.py submit --run-id frontier-smoke-001 \
-  --header-file /Users/vga/.config/olcf/stf053-s3m.header--frontier
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--moderate
 ```
 
 Submit only after reviewing the preview:
 
 ```bash
 .venv/bin/python amsc_frontier.py submit --run-id frontier-smoke-001 \
-  --header-file /Users/vga/.config/olcf/stf053-s3m.header--frontier --execute
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--moderate --execute
 ```
 
 The submission prints the AmSC job identifier, its initial state, job name, and

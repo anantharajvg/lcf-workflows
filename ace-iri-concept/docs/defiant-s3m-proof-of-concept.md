@@ -35,7 +35,7 @@ S3M authenticates requests with an OLCF project token. The token is stored in a
 header file outside this repository:
 
 ```text
-/Users/vga/.config/olcf/stf053-s3m.header
+/Users/vga/.config/olcf/stf053-s3m.header--open
 ```
 
 The file contains one `Authorization:` header and is readable only by its owner.
@@ -70,7 +70,7 @@ Confirm that S3M can authenticate to Defiant:
 
 ```bash
 python3 s3m_defiant.py probe \
-  --header-file /Users/vga/.config/olcf/stf053-s3m.header \
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--open \
   --execute
 ```
 
@@ -78,7 +78,7 @@ Prepare a new request. Choose a run ID that has not been used before:
 
 ```bash
 python3 s3m_defiant.py prepare \
-  --header-file /Users/vga/.config/olcf/stf053-s3m.header \
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--open \
   --run-id manual-002
 cat runs/s3m-manual-002/request.json
 ```
@@ -89,7 +89,7 @@ that review:
 
 ```bash
 python3 s3m_defiant.py submit \
-  --header-file /Users/vga/.config/olcf/stf053-s3m.header \
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--open \
   --run-id manual-002 \
   --execute
 ```
@@ -98,7 +98,7 @@ The response contains a numeric `job_id`. Check it until it is complete:
 
 ```bash
 python3 s3m_defiant.py status \
-  --header-file /Users/vga/.config/olcf/stf053-s3m.header \
+  --header-file /Users/vga/.config/olcf/stf053-s3m.header--open \
   --job-id JOB_ID \
   --execute
 ```
