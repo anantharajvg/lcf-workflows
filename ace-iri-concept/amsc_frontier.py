@@ -8,6 +8,7 @@ Submitting requires --execute; without it, the command only prints the request.
 import argparse
 import json
 import re
+from datetime import datetime, timezone
 from pathlib import Path
 
 from amsc_client import Client
@@ -92,7 +93,8 @@ def main() -> None:
 
     if not args.run_id or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,48}", args.run_id):
         parser.error("submit requires a valid --run-id")
-    job_name = f"ace-iri-frontier-{args.run_id}"[:128]
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+    job_name = f"ace-iri-frontier-{args.run_id}-{timestamp}"[:128]
     request = {
         "executable": "/bin/bash",
         "arguments": ["-lc", "set -euo pipefail; echo 'AmSC Frontier CPU smoke test'; date -u +%FT%TZ; hostname"],
@@ -112,6 +114,7 @@ def main() -> None:
     print(json.dumps({
         "job_id": job.id,
         "state": str(job.state),
+        "job_name": job_name,
         "expected_stdout": f"{config['directory'].rstrip('/')}/{job_name}.stdout",
     }, indent=2))
 

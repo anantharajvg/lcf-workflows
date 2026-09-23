@@ -142,9 +142,9 @@ sacct -X -j <job-id> --format=JobID,JobName,Partition,Account,AllocCPUS,State,Ex
 cat /lustre/orion/stf053/proj-shared/amsc-iri/ace-iri-frontier-frontier-smoke-002.stdout
 ```
 
-Do not assume a `slurm-<job-id>.out` filename. AmSC stores the verified job's
-stdout as `<job-name>.stdout`; no intentional stderr is produced by this smoke
-payload.
+Do not assume a `slurm-<job-id>.out` filename. AmSC stores stdout as
+`<job-name>.stdout`; new job names append a microsecond-precision UTC timestamp
+to the supplied run ID. No intentional stderr is produced by this smoke payload.
 
 ## Known limitation and next decision
 

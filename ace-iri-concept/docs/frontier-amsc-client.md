@@ -55,9 +55,11 @@ Submit only after reviewing the preview:
   --header-file /Users/vga/.config/olcf/stf053-s3m.header--frontier --execute
 ```
 
-The submission prints the AmSC job identifier, its initial state, and the
-expected stdout path. Use a new run ID for every submission; the run ID becomes
-part of the AmSC job name and output filename.
+The submission prints the AmSC job identifier, its initial state, job name, and
+expected stdout path. It appends a UTC timestamp with microsecond precision to
+the human-readable run ID, so a new submission is unique even when the same
+run ID is reused. For example, a run ID of `frontier-smoke` produces a name
+like `ace-iri-frontier-frontier-smoke-20260922T153045123456Z`.
 
 ## Manually verify the result
 
@@ -72,8 +74,8 @@ Wait for the parent record to show `COMPLETED` and `0:0`. Then inspect the
 files written by AmSC in the configured directory:
 
 ```bash
-ls -l /lustre/orion/stf053/proj-shared/amsc-iri/ace-iri-frontier-<run-id>.*
-cat /lustre/orion/stf053/proj-shared/amsc-iri/ace-iri-frontier-<run-id>.stdout
+ls -l /lustre/orion/stf053/proj-shared/amsc-iri/ace-iri-frontier-<run-id>-<utc-timestamp>.*
+cat /lustre/orion/stf053/proj-shared/amsc-iri/ace-iri-frontier-<run-id>-<utc-timestamp>.stdout
 ```
 
 The minimal smoke job prints its label, a UTC timestamp, and its execution-host
