@@ -9,12 +9,51 @@
   and explicit user authorization.
 - Release tags are created from reviewed snapshots on `main`.
 
-- Target Riker, user vga, allocation stf053. Do not use Frontier templates.
-- Keep authentication interactive and human-controlled. Never collect or store RSA credentials.
-- The SSH/Riker workflow remains local-only until explicitly authorized. The Defiant
-  S3M workflow may make read-only API requests when explicitly requested. Never
-  submit or cancel a job without explicit user authorization for that action.
-- Validate with `make test`. Shell syntax and simulated remote operations do not establish cluster compatibility.
-- Keep design and operating instructions in README.md; cluster settings in configs/riker.json.
+## Systems and approved paths
+
+- User: `vga`; allocation: `stf053`.
+- Riker uses the interactive SSH workflow in `interactive-workflows/`. It remains
+  local-only until a live Riker operation is explicitly authorized.
+- Defiant and Odo use the Open-enclave S3M workflow. Defiant is a scheduler
+  smoke test; Odo has both a smoke test and a validated Globus data workflow.
+- Frontier uses the Moderate-enclave AmSC Python Client workflow in
+  `amsc_frontier.py`. Direct SSH Frontier scripts are experimental only.
+
+## Credentials, enclaves, and data
+
+- Keep authentication interactive and human-controlled. Never collect, store,
+  or transmit RSA credentials.
+- Use `/Users/vga/.config/olcf/stf053-s3m.header--open` only for Defiant and
+  Odo. Use `/Users/vga/.config/olcf/stf053-s3m.header--moderate` only for
+  Frontier. Token headers must remain owner-readable only.
+- Never print, copy, log, commit, or place tokens in command arguments,
+  generated requests, environment dumps, or documentation.
+- Do not transfer Moderate-enclave data through Open-enclave systems or
+  collections. Confirm the data classification and approved enclave before a
+  transfer.
+
+## Live-operation safety
+
+- Read-only API requests require explicit user authorization.
+- Never submit, cancel, retry, or modify a Slurm job without explicit user
+  authorization for that operation.
+- Never create, cancel, retry, mirror, or delete a Globus transfer without
+  explicit user authorization for that operation.
+- For every live run, use a fresh run ID and run-specific output path. Verify
+  transfer and automation-account permissions before submission.
+- After an ambiguous or failed transfer or submission, preserve its run record,
+  task ID, and job ID. Inspect its state before deciding whether to retry. Never
+  delete a record or marker to bypass this protection.
+
+## Validation, documentation, and artifacts
+
+- Validate local changes with `make test`. Shell syntax and simulated remote
+  operations do not establish cluster compatibility.
+- Call a workflow validated only when the documented record includes the
+  command path, final scheduler and transfer state, identifiers, result check,
+  checksum evidence where applicable, and known limitations.
+- Keep quick-start reproduction instructions in `README.md`, detailed evidence
+  and recovery guidance in `docs/`, and system-specific settings in reviewed
+  files under `configs/`.
 - Do not log the full process environment. Record only selected provenance.
-- Never commit runs, results, credentials or large datasets.
+- Never commit runs, results, credentials, or large datasets.
