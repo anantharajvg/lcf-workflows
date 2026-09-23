@@ -57,6 +57,15 @@ These two successful jobs show that the local request format, token header,
 Defiant allocation, partition, working directory, and minimal Slurm launch all
 work together.
 
+## Final manual validation
+
+On 2026-09-23, the project owner repeated the documented Defiant procedure
+manually using the Open-enclave token header, reviewed the generated request,
+submitted a fresh run ID, and confirmed successful completion through the S3M
+status command. The job ID was not recorded in the project notes. This result
+revalidates the manual procedure; it does not replace the earlier recorded job
+IDs `14070` and `14071`.
+
 ## Manual procedure
 
 Start in the ACE IRI concept project directory and run the local checks:
@@ -104,7 +113,8 @@ python3 s3m_defiant.py status \
 ```
 
 Success means `state` is `COMPLETED` and the exit code is `0`. A pending or
-running job should be checked again later. Do not submit the same run ID twice:
+running job should be checked again later. Record the returned job ID with the
+run ID in a project note. Do not submit the same run ID twice:
 the script writes `submission-attempted` before the network call and blocks a
 second attempt. If the response is lost, inspect the scheduler before starting
 another submission.

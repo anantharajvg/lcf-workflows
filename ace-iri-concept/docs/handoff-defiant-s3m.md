@@ -20,6 +20,11 @@ The Defiant S3M proof of concept is complete. It submits a small CPU Slurm job
 from a laptop through S3M and reads back its final scheduler state. Two jobs
 completed successfully: `14070` and `14071`.
 
+The project owner repeated the full Defiant manual procedure successfully on
+2026-09-23 with the Open-enclave token header. The final job ID was not
+recorded; see [the Defiant proof-of-concept record](defiant-s3m-proof-of-concept.md)
+for the reproducible procedure and earlier recorded job IDs.
+
 Odo S3M access is also verified using the Defiant-token header. Odo job `44416`
 completed on 2026-09-22 with return code `0`. Its configuration is
 `configs/odo-s3m.json`; see [the Odo smoke-test record](odo-s3m-smoke-test.md).
