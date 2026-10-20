@@ -2,16 +2,23 @@
 """Token-file-based, explicit S3M operations for Defiant and Odo."""
 import argparse
 import json
+import os
 import re
 import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 
+def config_dir():
+    return Path(os.environ.get("ACE_IRI_CONFIG_DIR", ROOT / "configs"))
+
+def runs_dir():
+    return Path(os.environ.get("ACE_IRI_RUNS_DIR", ROOT / "runs"))
+
 def load_config(config_name="defiant-s3m.json"):
     if config_name not in ("defiant-s3m.json", "odo-s3m.json", "odo-e2e-s3m.json"):
         raise ValueError("Unexpected S3M configuration")
-    cfg = json.loads((ROOT / "configs" / config_name).read_text())
+    cfg = json.loads((config_dir() / config_name).read_text())
     if cfg["base_url"] not in (
         "https://s3m.olcf.ornl.gov/slurm/open/v0.0.43/defiant",
         "https://s3m.olcf.ornl.gov/slurm/open/v0.0.44/odo",
@@ -19,6 +26,8 @@ def load_config(config_name="defiant-s3m.json"):
         raise ValueError("Unexpected S3M base URL")
     if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]*", cfg["account"]):
         raise ValueError("Invalid account")
+    if not isinstance(cfg.get("environment"), list) or not all(isinstance(value, str) for value in cfg["environment"]):
+        raise ValueError("S3M environment must be a list of strings")
     if cfg["base_url"].endswith("/defiant"):
         if cfg["partition"] != "batch-cpu" or not cfg["working_directory"].startswith("/lustre/polis/"):
             raise ValueError("Defiant requires batch-cpu and a Polis working directory")
@@ -65,12 +74,7 @@ def request(cfg, run_id):
         raise ValueError("Invalid run ID")
     resource = cfg["base_url"].rsplit("/", 1)[-1]
     script = load_script(cfg)
-    environment = ["PATH=/usr/bin:/bin"]
-    if "input_directory" in cfg:
-        environment += [
-            f"ACE_IRI_INPUT_DIR={cfg['input_directory']}",
-            f"ACE_IRI_OUTPUT_DIR={cfg['output_root']}/{run_id}",
-        ]
+    environment = [value.format(run_id=run_id, **cfg) for value in cfg["environment"]]
     return {"job": {
         "name": f"ace-iri-{resource}-{run_id}"[:128], "account": cfg["account"],
         "partition": cfg["partition"], "nodes": "1", "tasks": 1,
@@ -82,7 +86,9 @@ def request(cfg, run_id):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=("probe", "jobs", "prepare", "submit", "status"))
-    parser.add_argument("--header-file", required=True)
+    parser.add_argument("--header-file", default=os.environ.get("ACE_IRI_OPEN_HEADER_FILE"),
+                        required=os.environ.get("ACE_IRI_OPEN_HEADER_FILE") is None,
+                        help="Open header file; defaults to ACE_IRI_OPEN_HEADER_FILE")
     parser.add_argument("--config", default="defiant-s3m.json",
                         choices=("defiant-s3m.json", "odo-s3m.json", "odo-e2e-s3m.json"))
     parser.add_argument("--run-id")
@@ -94,7 +100,7 @@ def main():
     if args.action == "prepare":
         if not args.run_id:
             parser.error("prepare requires --run-id")
-        path = ROOT / "runs" / f"s3m-{args.run_id}" / "request.json"
+        path = runs_dir() / f"s3m-{args.run_id}" / "request.json"
         if path.exists():
             raise FileExistsError("Request already exists; choose a new run ID")
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -112,7 +118,7 @@ def main():
     else:
         if not args.run_id:
             parser.error("submit requires --run-id")
-        body = ROOT / "runs" / f"s3m-{args.run_id}" / "request.json"
+        body = runs_dir() / f"s3m-{args.run_id}" / "request.json"
         if not body.is_file():
             raise FileNotFoundError("Run prepare first")
         cmd = curl(cfg, header, "/job/submit", method="POST", body=body)

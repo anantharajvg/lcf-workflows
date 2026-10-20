@@ -7,6 +7,7 @@ Submitting requires --execute; without it, the command only prints the request.
 
 import argparse
 import json
+import os
 import re
 from datetime import datetime, timezone
 from pathlib import Path
@@ -15,8 +16,8 @@ from amsc_client import Client
 
 
 ROOT = Path(__file__).resolve().parent
-DEFAULT_CONFIG = ROOT / "configs" / "frontier-amsc.json"
-DEFAULT_HEADER = Path("/Users/vga/.config/olcf/stf053-s3m.header--moderate")
+DEFAULT_CONFIG = Path(os.environ.get("ACE_IRI_FRONTIER_CONFIG", ROOT / "configs" / "frontier-amsc.json"))
+DEFAULT_HEADER = os.environ.get("ACE_IRI_FRONTIER_HEADER_FILE")
 
 
 def load_config(path: Path) -> dict:
@@ -28,6 +29,8 @@ def load_config(path: Path) -> dict:
         "account",
         "queue",
         "directory",
+        "working_directory_prefix",
+        "environment",
     }
     if set(config) != expected:
         raise ValueError("Unexpected Frontier AmSC configuration fields")
@@ -37,8 +40,10 @@ def load_config(path: Path) -> dict:
         raise ValueError("Unexpected compute resource")
     if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]*", config["account"]):
         raise ValueError("Invalid allocation name")
-    if not config["directory"].startswith("/lustre/orion/stf053/proj-shared/"):
-        raise ValueError("Use the approved Frontier project-shared staging directory")
+    if not config["working_directory_prefix"].startswith("/") or not config["directory"].startswith(config["working_directory_prefix"]):
+        raise ValueError("Staging directory is outside the configured approved prefix")
+    if not isinstance(config["environment"], dict) or not all(isinstance(key, str) and isinstance(value, str) for key, value in config["environment"].items()):
+        raise ValueError("Frontier environment must be a string mapping")
     return config
 
 
@@ -76,7 +81,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=("probe", "submit"))
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
-    parser.add_argument("--header-file", type=Path, default=DEFAULT_HEADER)
+    parser.add_argument("--header-file", type=Path, default=DEFAULT_HEADER,
+                        required=DEFAULT_HEADER is None,
+                        help="Moderate header file; defaults to ACE_IRI_FRONTIER_HEADER_FILE")
     parser.add_argument("--run-id", help="Required for submit; letters, digits, _ and - only")
     parser.add_argument("--execute", action="store_true", help="Actually submit the job")
     args = parser.parse_args()
@@ -104,7 +111,7 @@ def main() -> None:
         "account": config["account"],
         "duration": 300,
         "nodes": 1,
-        "environment": {"ACE_IRI_RUN_ID": args.run_id},
+        "environment": {key: value.format(run_id=args.run_id) for key, value in config["environment"].items()},
     }
     if not args.execute:
         print(json.dumps(request, indent=2))

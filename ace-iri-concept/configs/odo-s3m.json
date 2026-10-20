@@ -3,5 +3,6 @@
   "account": "stf053",
   "partition": "batch",
   "working_directory": "/gpfs/wolf2/olcf/stf053/proj-shared",
-  "script_file": "hpc/odo-smoke.sbatch"
+  "script_file": "hpc/odo-smoke.sbatch",
+  "environment": ["PATH=/usr/bin:/bin"]
 }

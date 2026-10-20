@@ -3,5 +3,6 @@
   "account": "stf053",
   "partition": "batch-cpu",
   "working_directory": "/lustre/polis/stf053/proj-shared/olcf-s3m-test",
-  "script_file": "hpc/defiant-smoke.sbatch"
+  "script_file": "hpc/defiant-smoke.sbatch",
+  "environment": ["PATH=/usr/bin:/bin"]
 }

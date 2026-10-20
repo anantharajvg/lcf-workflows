@@ -5,5 +5,10 @@
   "working_directory": "/gpfs/wolf2/olcf/stf053/proj-shared",
   "script_file": "hpc/odo-globus-e2e.sbatch",
   "input_directory": "/gpfs/wolf2/olcf/stf053/proj-shared/ace-iri-concept/inputs/globus-dataset-001",
-  "output_root": "/gpfs/wolf2/olcf/stf053/proj-shared"
+  "output_root": "/gpfs/wolf2/olcf/stf053/proj-shared",
+  "environment": [
+    "PATH=/usr/bin:/bin",
+    "ACE_IRI_INPUT_DIR={input_directory}",
+    "ACE_IRI_OUTPUT_DIR={output_root}/{run_id}"
+  ]
 }
