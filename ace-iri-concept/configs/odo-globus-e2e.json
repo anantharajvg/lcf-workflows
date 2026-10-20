@@ -5,5 +5,6 @@
   "remote_input": "/gpfs/wolf2/olcf/stf053/proj-shared/ace-iri-concept/inputs/globus-dataset-001",
   "remote_output_root": "/gpfs/wolf2/olcf/stf053/proj-shared",
   "local_output_root": "fixtures/globus-dataset-001/retrieved",
-  "s3m_config": "odo-e2e-s3m.json"
+  "s3m_config": "odo-e2e-s3m.json",
+  "remote_path_prefix": "/gpfs/wolf2/olcf/stf053/proj-shared"
 }

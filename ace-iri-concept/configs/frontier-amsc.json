@@ -4,5 +4,9 @@
   "resource_name": "Frontier",
   "account": "stf053",
   "queue": "batch",
-  "directory": "/lustre/orion/stf053/proj-shared/amsc-iri/"
+  "directory": "/lustre/orion/stf053/proj-shared/amsc-iri/",
+  "working_directory_prefix": "/lustre/orion/stf053/proj-shared/",
+  "environment": {
+    "ACE_IRI_RUN_ID": "{run_id}"
+  }
 }

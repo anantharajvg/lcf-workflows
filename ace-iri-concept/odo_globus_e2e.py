@@ -8,6 +8,7 @@ tasks or Slurm submissions after an interrupted command.
 import argparse
 import hashlib
 import json
+import os
 import re
 import subprocess
 import time
@@ -17,8 +18,8 @@ import s3m_defiant as s3m
 
 
 ROOT = Path(__file__).resolve().parent
-CONFIG_PATH = ROOT / "configs" / "odo-globus-e2e.json"
-DEFAULT_HEADER = Path("/Users/vga/.config/olcf/stf053-s3m.header--open")
+CONFIG_PATH = Path(os.environ.get("ACE_IRI_ODO_GLOBUS_CONFIG", ROOT / "configs" / "odo-globus-e2e.json"))
+DEFAULT_HEADER = os.environ.get("ACE_IRI_ODO_HEADER_FILE")
 
 
 def load_config(path: Path) -> dict:
@@ -26,6 +27,7 @@ def load_config(path: Path) -> dict:
     required = {
         "source_collection", "destination_collection", "local_input",
         "remote_input", "remote_output_root", "local_output_root", "s3m_config",
+        "remote_path_prefix",
     }
     if set(config) != required:
         raise ValueError("Unexpected Odo Globus configuration fields")
@@ -34,14 +36,17 @@ def load_config(path: Path) -> dict:
     for key in ("source_collection", "destination_collection"):
         if not re.fullmatch(r"[0-9a-f-]{36}", config[key]):
             raise ValueError(f"Invalid Globus collection ID: {key}")
+    if not config["remote_path_prefix"].startswith("/"):
+        raise ValueError("Odo remote path prefix must be absolute")
     for key in ("remote_input", "remote_output_root"):
-        if not config[key].startswith("/gpfs/wolf2/olcf/stf053/proj-shared"):
-            raise ValueError(f"Unexpected Odo storage path: {key}")
+        if not config[key].startswith(config["remote_path_prefix"]):
+            raise ValueError(f"Odo storage path is outside configured prefix: {key}")
     return config
 
 
 def run_dir(run_id: str) -> Path:
-    return ROOT / "runs" / f"odo-globus-{run_id}"
+    root = Path(os.environ.get("ACE_IRI_RUNS_DIR", ROOT / "runs"))
+    return root / f"odo-globus-{run_id}"
 
 
 def read_record(path: Path) -> dict:
@@ -101,7 +106,7 @@ def wait_for_globus(task_id: str) -> None:
 def s3m_submit(header: Path, run_id: str) -> int:
     config = s3m.load_config("odo-e2e-s3m.json")
     body = s3m.request(config, run_id)
-    request_path = ROOT / "runs" / f"s3m-{run_id}" / "request.json"
+    request_path = Path(os.environ.get("ACE_IRI_RUNS_DIR", ROOT / "runs")) / f"s3m-{run_id}" / "request.json"
     if request_path.exists():
         raise FileExistsError("S3M request already exists; inspect it before any retry")
     request_path.parent.mkdir(parents=True, exist_ok=True)
@@ -183,7 +188,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=("prepare", "run", "validate"))
     parser.add_argument("--run-id", required=True)
-    parser.add_argument("--header-file", type=Path, default=DEFAULT_HEADER)
+    parser.add_argument("--header-file", type=Path, default=DEFAULT_HEADER,
+                        required=DEFAULT_HEADER is None,
+                        help="Open header file; defaults to ACE_IRI_ODO_HEADER_FILE")
     parser.add_argument("--config", type=Path, default=CONFIG_PATH)
     parser.add_argument("--execute", action="store_true")
     args = parser.parse_args()
